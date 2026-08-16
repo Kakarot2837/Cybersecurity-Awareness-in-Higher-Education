@@ -1,0 +1,10 @@
+# Python environment
+__pycache__/
+venv/
+env/
+
+# Environment variables (Database passwords)
+.env
+
+# IDE files
+.vscode/
