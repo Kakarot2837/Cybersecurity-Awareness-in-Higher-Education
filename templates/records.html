@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Records Explorer — vit_cyber_project</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased py-8 px-4 sm:px-6 lg:px-8">
+
+    <div class="max-w-7xl mx-auto space-y-6">
+
+        <!-- Top Header Navigation -->
+        <header class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <div class="flex items-center space-x-2 text-xs font-mono text-emerald-400 mb-1">
+                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>LIVE MYSQL 8.0 DATABASE: vit_cyber_project</span>
+                </div>
+                <h1 class="text-2xl font-bold text-white tracking-tight">Database Records Explorer</h1>
+                <p class="text-xs text-slate-400 mt-1">Real-time inspection of student profiles, survey answers, and biometric telemetry</p>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <a href="/" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-mono font-semibold rounded-xl shadow-md transition flex items-center space-x-1.5">
+                    <span>←</span>
+                    <span>Back to Survey Portal</span>
+                </a>
+                <button onclick="window.location.reload()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono rounded-xl border border-slate-700 transition">
+                    🔄 Refresh Data
+                </button>
+            </div>
+        </header>
+
+        <!-- Summary Metric Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-lg">
+                <div class="text-[11px] uppercase font-mono text-slate-400">Total Students</div>
+                <div class="text-2xl font-bold font-mono text-blue-400 mt-1">{{ counts.students }}</div>
+                <div class="text-[10px] text-slate-500 mt-1 font-mono">Table: students</div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-lg">
+                <div class="text-[11px] uppercase font-mono text-slate-400">Survey Responses</div>
+                <div class="text-2xl font-bold font-mono text-emerald-400 mt-1">{{ counts.surveys }}</div>
+                <div class="text-[10px] text-slate-500 mt-1 font-mono">Table: survey_responses</div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-lg">
+                <div class="text-[11px] uppercase font-mono text-slate-400">Keystroke Packets</div>
+                <div class="text-2xl font-bold font-mono text-purple-400 mt-1">{{ counts.keystrokes }}</div>
+                <div class="text-[10px] text-slate-500 mt-1 font-mono">Table: keystroke_telemetry</div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-lg">
+                <div class="text-[11px] uppercase font-mono text-slate-400">Threat Audits</div>
+                <div class="text-2xl font-bold font-mono text-amber-400 mt-1">{{ counts.threats }}</div>
+                <div class="text-[10px] text-slate-500 mt-1 font-mono">Table: correlated_threat_events</div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="flex flex-wrap gap-2 border-b border-slate-800 pb-2">
+            <button onclick="switchTab('tab-students')" id="btn-tab-students"
+                    class="tab-btn px-4 py-2 rounded-xl text-xs font-mono font-semibold bg-blue-600 text-white transition">
+                👥 Students & Surveys ({{ students|length }})
+            </button>
+            <button onclick="switchTab('tab-keystrokes')" id="btn-tab-keystrokes"
+                    class="tab-btn px-4 py-2 rounded-xl text-xs font-mono font-semibold bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition">
+                ⌨️ Raw Keystrokes ({{ keystrokes|length }})
+            </button>
+            <button onclick="switchTab('tab-behavioral')" id="btn-tab-behavioral"
+                    class="tab-btn px-4 py-2 rounded-xl text-xs font-mono font-semibold bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition">
+                📈 Behavioral Analytics ({{ analytics|length }})
+            </button>
+            <button onclick="switchTab('tab-threats')" id="btn-tab-threats"
+                    class="tab-btn px-4 py-2 rounded-xl text-xs font-mono font-semibold bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition">
+                🚨 Correlated Threats ({{ threats|length }})
+            </button>
+        </div>
+
+        <!-- TAB 1: Students & Surveys -->
+        <div id="tab-students" class="tab-content bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+            <div class="flex justify-between items-center">
+                <h2 class="text-base font-bold text-white font-mono flex items-center gap-2">
+                    <span>Recent Students & Cyber Hygiene Responses</span>
+                    <span class="text-xs font-normal text-slate-400">showing latest 20 rows</span>
+                </h2>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs font-mono">
+                    <thead>
+                        <tr class="text-slate-400 border-b border-slate-800 text-[11px] uppercase bg-slate-950/60">
+                            <th class="py-3 px-3">ID</th>
+                            <th class="py-3 px-3">OAuth Email</th>
+                            <th class="py-3 px-3">Branch</th>
+                            <th class="py-3 px-3">Year</th>
+                            <th class="py-3 px-3">Device</th>
+                            <th class="py-3 px-3">2FA</th>
+                            <th class="py-3 px-3">Update Freq</th>
+                            <th class="py-3 px-3">Cybercrime</th>
+                            <th class="py-3 px-3">Risk Score</th>
+                            <th class="py-3 px-3">Registered At</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60">
+                        {% for s in students %}
+                        <tr class="hover:bg-slate-800/30 transition">
+                            <td class="py-2.5 px-3 font-bold text-blue-400">#{{ s.student_id }}</td>
+                            <td class="py-2.5 px-3 text-white font-semibold">{{ s.oauth_email }}</td>
+                            <td class="py-2.5 px-3 text-slate-300">{{ s.branch }}</td>
+                            <td class="py-2.5 px-3 text-slate-400">{{ s.year_of_study }}</td>
+                            <td class="py-2.5 px-3 text-slate-400">{{ s.primary_device }}</td>
+                            <td class="py-2.5 px-3">
+                                {% if s.uses_2fa == 1 %}
+                                <span class="text-emerald-400 font-bold bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800/80">Yes</span>
+                                {% else %}
+                                <span class="text-rose-400 font-bold bg-rose-950/80 px-2 py-0.5 rounded border border-rose-800/80">No</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-2.5 px-3 text-slate-300">{{ s.software_update_freq or 'N/A' }}</td>
+                            <td class="py-2.5 px-3 text-slate-400">
+                                {% if s.experienced_cybercrime == 1 %}
+                                <span class="text-amber-400 font-bold">{{ s.cybercrime_type or 'Yes' }}</span>
+                                {% else %}
+                                <span class="text-slate-500">None</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-2.5 px-3">
+                                <span class="px-2 py-0.5 rounded font-bold {% if (s.overall_risk_score or 50) > 70 %}bg-red-950 text-red-400 border border-red-800{% elif (s.overall_risk_score or 50) > 40 %}bg-amber-950 text-amber-400 border border-amber-800{% else %}bg-emerald-950 text-emerald-400 border border-emerald-800{% endif %}">
+                                    {{ s.overall_risk_score or 50 }}
+                                </span>
+                            </td>
+                            <td class="py-2.5 px-3 text-slate-500 text-[10px]">{{ s.created_at }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="10" class="text-center py-8 text-slate-500">No student records found in database.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB 2: Keystroke Telemetry -->
+        <div id="tab-keystrokes" class="tab-content hidden bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+            <div class="flex justify-between items-center">
+                <h2 class="text-base font-bold text-white font-mono flex items-center gap-2">
+                    <span>Raw Keystroke Biometric Telemetry</span>
+                    <span class="text-xs font-normal text-slate-400">showing latest 20 keystrokes</span>
+                </h2>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs font-mono">
+                    <thead>
+                        <tr class="text-slate-400 border-b border-slate-800 text-[11px] uppercase bg-slate-950/60">
+                            <th class="py-3 px-3">ID</th>
+                            <th class="py-3 px-3">Session ID</th>
+                            <th class="py-3 px-3">Student ID</th>
+                            <th class="py-3 px-3">Key Code</th>
+                            <th class="py-3 px-3">Dwell Time (ms)</th>
+                            <th class="py-3 px-3">Flight Time (ms)</th>
+                            <th class="py-3 px-3">Captured At</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60">
+                        {% for k in keystrokes %}
+                        <tr class="hover:bg-slate-800/30 transition">
+                            <td class="py-2.5 px-3 font-bold text-purple-400">#{{ k.keystroke_id }}</td>
+                            <td class="py-2.5 px-3 text-slate-400" title="{{ k.session_id }}">{{ k.session_id[:12] }}...</td>
+                            <td class="py-2.5 px-3 text-slate-300">{{ k.student_id or 'Anonymous' }}</td>
+                            <td class="py-2.5 px-3 text-white font-bold"><span class="bg-slate-800 px-2 py-0.5 rounded border border-slate-700">{{ k.key_code }}</span></td>
+                            <td class="py-2.5 px-3 text-blue-400 font-semibold">{{ k.dwell_time }} ms</td>
+                            <td class="py-2.5 px-3 text-purple-400 font-semibold">{{ k.flight_time }} ms</td>
+                            <td class="py-2.5 px-3 text-slate-500 text-[10px]">{{ k.created_at }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center py-8 text-slate-500">No keystroke telemetry logged yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB 3: Behavioral Analytics -->
+        <div id="tab-behavioral" class="tab-content hidden bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+            <div class="flex justify-between items-center">
+                <h2 class="text-base font-bold text-white font-mono flex items-center gap-2">
+                    <span>Session Rolling Statistics (behavioral_analytics)</span>
+                    <span class="text-xs font-normal text-slate-400">showing latest 20 sessions</span>
+                </h2>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs font-mono">
+                    <thead>
+                        <tr class="text-slate-400 border-b border-slate-800 text-[11px] uppercase bg-slate-950/60">
+                            <th class="py-3 px-3">Analytics ID</th>
+                            <th class="py-3 px-3">Session ID</th>
+                            <th class="py-3 px-3">Student ID</th>
+                            <th class="py-3 px-3">Avg Dwell</th>
+                            <th class="py-3 px-3">Dwell Variance</th>
+                            <th class="py-3 px-3">Avg Flight</th>
+                            <th class="py-3 px-3">Flight Variance</th>
+                            <th class="py-3 px-3">Sample Count</th>
+                            <th class="py-3 px-3">Last Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60">
+                        {% for b in analytics %}
+                        <tr class="hover:bg-slate-800/30 transition">
+                            <td class="py-2.5 px-3 font-bold text-emerald-400">#{{ b.analytics_id }}</td>
+                            <td class="py-2.5 px-3 text-slate-400" title="{{ b.session_id }}">{{ b.session_id[:12] if b.session_id else 'N/A' }}...</td>
+                            <td class="py-2.5 px-3 text-slate-300">{{ b.student_id or 'Anonymous' }}</td>
+                            <td class="py-2.5 px-3 text-blue-300">{{ b.avg_dwell_time }} ms</td>
+                            <td class="py-2.5 px-3 text-blue-400 font-bold">{{ b.dwell_time_var }}</td>
+                            <td class="py-2.5 px-3 text-purple-300">{{ b.avg_flight_time }} ms</td>
+                            <td class="py-2.5 px-3 text-purple-400 font-bold">{{ b.flight_time_var }}</td>
+                            <td class="py-2.5 px-3 text-emerald-400 font-bold">{{ b.sample_count }}</td>
+                            <td class="py-2.5 px-3 text-slate-500 text-[10px]">{{ b.updated_at }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="9" class="text-center py-8 text-slate-500">No behavioral analytics logged yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB 4: Correlated Threat Events -->
+        <div id="tab-threats" class="tab-content hidden bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+            <div class="flex justify-between items-center">
+                <h2 class="text-base font-bold text-white font-mono flex items-center gap-2">
+                    <span>Correlated Threat Incidents & Mitigation Audit</span>
+                    <span class="text-xs font-normal text-slate-400">showing latest 20 threat records</span>
+                </h2>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs font-mono">
+                    <thead>
+                        <tr class="text-slate-400 border-b border-slate-800 text-[11px] uppercase bg-slate-950/60">
+                            <th class="py-3 px-3">Event ID</th>
+                            <th class="py-3 px-3">Threat Level</th>
+                            <th class="py-3 px-3">Threat Classification</th>
+                            <th class="py-3 px-3">Mitigation Action</th>
+                            <th class="py-3 px-3">Dwell Var</th>
+                            <th class="py-3 px-3">Flight Var</th>
+                            <th class="py-3 px-3">Details</th>
+                            <th class="py-3 px-3">Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60">
+                        {% for t in threats %}
+                        <tr class="hover:bg-slate-800/30 transition">
+                            <td class="py-2.5 px-3 font-bold text-red-400">#{{ t.event_id }}</td>
+                            <td class="py-2.5 px-3">
+                                {% if t.threat_level == 'CRITICAL' %}
+                                <span class="bg-red-950 text-red-400 border border-red-800 font-bold px-2 py-0.5 rounded text-[10px]">CRITICAL</span>
+                                {% elif t.threat_level == 'HIGH' %}
+                                <span class="bg-orange-950 text-orange-400 border border-orange-800 font-bold px-2 py-0.5 rounded text-[10px]">HIGH</span>
+                                {% else %}
+                                <span class="bg-yellow-950 text-yellow-400 border border-yellow-800 font-bold px-2 py-0.5 rounded text-[10px]">MEDIUM</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-2.5 px-3 text-white font-bold">{{ t.threat_label }}</td>
+                            <td class="py-2.5 px-3 text-emerald-400 font-bold"><code class="bg-slate-950 px-2 py-0.5 rounded border border-slate-800">{{ t.mitigation_action }}</code></td>
+                            <td class="py-2.5 px-3 text-blue-300">{{ t.dwell_var }}</td>
+                            <td class="py-2.5 px-3 text-purple-300">{{ t.flight_var }}</td>
+                            <td class="py-2.5 px-3 text-slate-300 max-w-xs truncate" title="{{ t.threat_details }}">{{ t.threat_details }}</td>
+                            <td class="py-2.5 px-3 text-slate-500 text-[10px]">{{ t.created_at }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center py-8 text-slate-500">No threat events recorded in database yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function switchTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            // Remove active styling from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = 'tab-btn px-4 py-2 rounded-xl text-xs font-mono font-semibold bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition';
+            });
+
+            // Show selected tab content
+            document.getElementById(tabId).classList.remove('hidden');
+
+            // Style active button
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.className = 'tab-btn px-4 py-2 rounded-xl text-xs font-mono font-semibold bg-blue-600 text-white transition';
+        }
+    </script>
+</body>
+</html>

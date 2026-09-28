@@ -1,0 +1,40 @@
+[1mdiff --git a/test_connection.py b/test_connection.py[m
+[1mindex c9ab944..920c1f1 100644[m
+[1m--- a/test_connection.py[m
+[1m+++ b/test_connection.py[m
+[36m@@ -1,17 +1,33 @@[m
+ import mysql.connector[m
+ [m
+[32m+[m
+[32m+[m
+ try:[m
+[32m+[m
+     db = mysql.connector.connect([m
+[32m+[m
+         host="localhost",[m
+[32m+[m
+         user="root",[m
+[31m-        password="Shs72#ov@",[m
+[32m+[m
+[32m+[m[32m        password="adibobade28#",[m
+[32m+[m
+         database="vit_cyber_project"[m
+[32m+[m
+     )[m
+ [m
+[32m+[m
+[32m+[m
+     print("Connected to MySQL successfully!")[m
+ [m
+[32m+[m
+[32m+[m
+     db.close()[m
+ [m
+[32m+[m
+[32m+[m
+ except mysql.connector.Error as err:[m
+[32m+[m
+     print("Connection failed!")[m
+[32m+[m
+     print(err)[m
+\ No newline at end of file[m

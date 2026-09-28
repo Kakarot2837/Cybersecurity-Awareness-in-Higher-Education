@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SECURE TERMINAL // ISOLATION PROTOCOL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(1000%); }
+        }
+        .scanline {
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: rgba(239, 68, 68, 0.4);
+            animation: scan 6s linear infinite;
+        }
+        .crt-glow {
+            text-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+        }
+    </style>
+</head>
+<body class="bg-gray-950 text-red-500 font-mono min-h-screen p-8 relative overflow-hidden">
+    <div class="scanline pointer-events-none"></div>
+
+    <div class="max-w-4xl mx-auto border-2 border-red-800 bg-black/90 p-6 rounded-lg shadow-2xl shadow-red-950/80">
+        <!-- Header -->
+        <div class="border-b border-red-900 pb-4 mb-6 flex justify-between items-center">
+            <div>
+                <span class="inline-block bg-red-950 text-red-400 border border-red-700 px-3 py-1 text-xs font-bold uppercase tracking-widest rounded animate-pulse">
+                    ⚠ AUTONOMOUS MITIGATION TRIGGERED: ROUTE_TO_HONEYPOT
+                </span>
+                <h1 class="text-2xl font-bold mt-2 text-red-400 crt-glow">COERCED SESSION BREACH DETECTED</h1>
+            </div>
+            <div class="text-right text-xs text-red-400/70">
+                <div>SESSION_TRAP_ID</div>
+                <div class="font-bold text-red-300">{{ session_id }}</div>
+            </div>
+        </div>
+
+        <!-- Warning Banner -->
+        <div class="bg-red-950/40 border border-red-800/80 p-4 rounded mb-6 text-sm leading-relaxed text-red-300">
+            <p class="font-bold text-red-400 mb-1">ZERO-TRUST CORRELATION ENGINE ACTIVE VERDICT:</p>
+            <p>Biometric anomaly triggered: High dwell-time variance correlated with multiple detected facial presences. 
+            The active user session has been isolated into an autonomous containment honeypot sandbox to protect core assets.</p>
+        </div>
+
+        <!-- Terminal Output -->
+        <div class="bg-gray-900 border border-red-950 p-4 rounded text-xs space-y-2 text-gray-300 font-mono h-64 overflow-y-auto">
+            <p class="text-red-400">[0.001] ALERT: Coerced Session Breach condition matched rule (Dwell Variance > Threshold AND Face Count >= 2).</p>
+            <p class="text-yellow-400">[0.012] MITIGATION: Diverting HTTP traffic to Decoy Sandbox Gateway.</p>
+            <p class="text-gray-400">[0.015] AUDIT: Session record tagged in vit_cyber_project.correlated_threat_events.</p>
+            <p class="text-gray-400">[0.021] FORENSICS: Continuous biometric capturing engaged.</p>
+            <p class="text-emerald-400">[0.034] HONEYPOT: Sandbox environment ready. Fake system credentials deployed.</p>
+            <p class="text-gray-500">[0.050] root@cyber-sandbox-isolate:~# ps aux | grep vit_engine</p>
+            <p class="text-gray-500">[0.055] PID 4092: isolation_wrapper --state=trapped</p>
+            <p class="text-red-400 animate-pulse">[LIVE] Incident logged. Operator notification dispatched to SOC console.</p>
+        </div>
+
+        <div class="mt-6 flex justify-between items-center pt-4 border-t border-red-950">
+            <a href="/" class="px-4 py-2 bg-red-900/60 hover:bg-red-800 text-red-200 border border-red-700 text-xs font-bold rounded transition">
+                ← Return to Safe Session Console
+            </a>
+            <span class="text-xs text-red-600">VIT Cybersecurity Zero-Trust CTI Architecture</span>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybersecurity Awareness & Biometric Verification Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/style.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandDark: '#0f172a',
+                        brandCard: '#1e293b',
+                        brandBorder: '#334155',
+                        brandBlue: '#2563eb',
+                        brandEmerald: '#059669',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased py-8 px-4 sm:px-6 lg:px-8">
+
+    <div class="max-w-4xl mx-auto space-y-6">
+
+        <!-- Top Header Banner -->
+        <header class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <div class="flex items-center space-x-2 text-xs font-mono text-blue-400 mb-1">
+                    <span class="inline-block w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                    <span>VISHWAKARMA INSTITUTE OF TECHNOLOGY (VIT)</span>
+                </div>
+                <h1 class="text-2xl font-bold text-white tracking-tight">Cybersecurity Survey & Biometric Verification</h1>
+                <p class="text-xs text-slate-400 mt-1">Continuous Keystroke Dynamics Capture & Cyber Hygiene Assessment</p>
+            </div>
+
+            <!-- Session & Connection Status Badges -->
+            <div class="flex flex-wrap items-center gap-2 text-xs font-mono">
+                <span class="bg-slate-800 border border-slate-700 text-slate-300 px-3 py-1.5 rounded-lg" title="Session UUID: {{ session_id }}">
+                    Session: <b class="text-blue-400">{{ session_id[:8] }}...</b>
+                </span>
+                <span id="biometric-badge" class="bg-emerald-950 text-emerald-400 border border-emerald-800 px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span> NORMAL
+                </span>
+            </div>
+        </header>
+
+        <!-- Main Submission Form (Survey + Keystroke Dynamics) -->
+        <form id="portal-form" onsubmit="handleFormSubmit(event)" class="space-y-6">
+            <input type="hidden" name="session_id" value="{{ session_id }}">
+
+            <!-- ========================================================= -->
+            <!-- SECTION 1: CYBER HYGIENE SURVEY -->
+            <!-- ========================================================= -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+                
+                <div class="border-b border-slate-800 pb-3 flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <span class="w-7 h-7 rounded-lg bg-blue-600/20 text-blue-400 border border-blue-500/30 flex items-center justify-center font-bold text-sm">1</span>
+                        <div>
+                            <h2 class="text-lg font-semibold text-white">Student Profile & Cyber Hygiene Survey</h2>
+                            <p class="text-xs text-slate-400">Recorded into students and survey_responses database tables</p>
+                        </div>
+                    </div>
+                    <span class="text-xs text-slate-500 font-mono">Step 1 of 2</span>
+                </div>
+
+                <!-- Part A: Student Identification -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">College Email Address *</label>
+                        <input type="email" name="email" id="email" required placeholder="student.name@vit.edu"
+                               class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition font-mono">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Academic Department / Branch *</label>
+                        <select name="branch" id="branch" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 transition">
+                            <option value="Computer Engineering">Computer Engineering</option>
+                            <option value="IT">Information Technology (IT)</option>
+                            <option value="AI & Data Science">AI & Data Science</option>
+                            <option value="EnTC">Electronics & Telecom (EnTC)</option>
+                            <option value="Mechanical">Mechanical Engineering</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Year of Study</label>
+                        <select name="year" id="year" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 transition">
+                            <option value="1">1st Year (FY)</option>
+                            <option value="2">2nd Year (SY)</option>
+                            <option value="3" selected>3rd Year (TY)</option>
+                            <option value="4">4th Year (B.Tech Final)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Primary Computing Device</label>
+                        <select name="device" id="device" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 transition">
+                            <option value="Laptop">Laptop Workstation</option>
+                            <option value="Smartphone">Smartphone</option>
+                            <option value="Tablet">Tablet</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Part B: Cyber Hygiene Questions -->
+                <div class="border-t border-slate-800/80 pt-4 space-y-4">
+                    <h3 class="text-sm font-semibold text-blue-400">Cyber Hygiene Questionnaire</h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        
+                        <!-- Question 1: 2FA -->
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1.5">
+                                Do you enforce Two-Factor Authentication (2FA)?
+                            </label>
+                            <select name="uses_2fa" id="uses_2fa" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                                <option value="1">Yes — Enabled on email & portals</option>
+                                <option value="0">No — Passwords only</option>
+                            </select>
+                        </div>
+
+                        <!-- Question 2: Updates -->
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1.5">
+                                Software Patch & OS Update Frequency
+                            </label>
+                            <select name="update_freq" id="update_freq" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                                <option value="Always">Immediate / Always updated</option>
+                                <option value="Sometimes">Periodic / Sometimes</option>
+                                <option value="Rarely">Delayed / Rarely</option>
+                                <option value="Never">Never / Ignored</option>
+                            </select>
+                        </div>
+
+                        <!-- Question 3: Password Strength -->
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1.5">
+                                Password Creation & Management Habit
+                            </label>
+                            <select name="password_score" id="password_score" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                                <option value="90">Strong (Unique per site + Password Manager)</option>
+                                <option value="70">Moderate (Complex password, slightly reused)</option>
+                                <option value="40">Weak (Simple password, frequently reused)</option>
+                            </select>
+                        </div>
+
+                        <!-- Question 4: Crime Experience -->
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1.5">
+                                Have you or your peers experienced cybercrime?
+                            </label>
+                            <select name="experienced_crime" id="experienced_crime" onchange="toggleCrimeType(this.value)" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                                <option value="0">No — Never experienced</option>
+                                <option value="1">Yes — Encountered cyber incident</option>
+                            </select>
+                        </div>
+
+                        <!-- Question 5: Crime Type (Conditional) -->
+                        <div id="crime-type-container" class="hidden md:col-span-2">
+                            <label class="block text-xs font-medium text-amber-300 mb-1.5">
+                                What type of cyber incident did you encounter?
+                            </label>
+                            <select name="crime_type" id="crime_type" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+                                <option value="Phishing Link">Phishing Link / Credential Harvest</option>
+                                <option value="UPI Fraud">UPI / Financial Fraud</option>
+                                <option value="Social Media Cloned">Social Media Identity Cloned</option>
+                                <option value="Fake Internship Offer">Fake Job / Internship Offer Scam</option>
+                                <option value="Other">Other Cyber Incident</option>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ========================================================= -->
+            <!-- SECTION 2: BIOMETRIC KEYSTROKE DYNAMICS CAPTURE -->
+            <!-- ========================================================= -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+                
+                <div class="border-b border-slate-800 pb-3 flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <span class="w-7 h-7 rounded-lg bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-bold text-sm">2</span>
+                        <div>
+                            <h2 class="text-lg font-semibold text-white">Biometric Keystroke Dynamics Capture</h2>
+                            <p class="text-xs text-slate-400">Millisecond-level neuromuscular dwell & flight variance analysis</p>
+                        </div>
+                    </div>
+                    <span class="text-xs text-slate-500 font-mono">Step 2 of 2</span>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-2">
+                        Verification Security Phrase (Type below to calibrate your biometric rhythm):
+                    </label>
+                    <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs font-mono text-emerald-300 font-semibold select-all">
+                        "VIT cyber security continuous biometric verification zero trust framework"
+                    </div>
+                </div>
+
+                <!-- Interactive Keystroke Input -->
+                <div class="relative">
+                    <input type="text" id="keystroke-input" autocomplete="off" spellcheck="false"
+                           placeholder="Click here and begin typing the security phrase above..."
+                           class="w-full bg-slate-950 border-2 border-slate-700 rounded-xl px-4 py-3.5 text-base text-white font-mono placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition shadow-inner">
+                    
+                    <!-- Revocation Banner -->
+                    <div id="keystroke-locked-banner" class="hidden absolute inset-0 bg-red-950/95 backdrop-blur-md rounded-xl border-2 border-red-600 flex flex-col items-center justify-center text-red-300 text-xs font-mono font-bold space-y-1">
+                        <span class="text-lg">🔒</span>
+                        <span>INPUT REVOKED: SESSION TERMINATED BY CORRELATION ENGINE</span>
+                        <span class="text-[11px] font-normal text-red-400">High timing variance detected. Neuromuscular mismatch suspended access.</span>
+                    </div>
+                </div>
+
+                <!-- Live Biometric Telemetry Strip -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
+                    <div class="bg-slate-950 border border-slate-800 p-3 rounded-lg">
+                        <div class="text-slate-400 text-[10px] uppercase">Live Dwell</div>
+                        <div class="text-lg font-bold text-blue-400 mt-0.5"><span id="live-dwell">0.0</span> <span class="text-xs font-normal text-slate-500">ms</span></div>
+                    </div>
+                    <div class="bg-slate-950 border border-slate-800 p-3 rounded-lg">
+                        <div class="text-slate-400 text-[10px] uppercase">Live Flight</div>
+                        <div class="text-lg font-bold text-purple-400 mt-0.5"><span id="live-flight">0.0</span> <span class="text-xs font-normal text-slate-500">ms</span></div>
+                    </div>
+                    <div class="bg-slate-950 border border-slate-800 p-3 rounded-lg">
+                        <div class="text-slate-400 text-[10px] uppercase">Dwell Var (σ²)</div>
+                        <div class="text-lg font-bold text-slate-200 mt-0.5"><span id="stat-dwell-var">0.0</span></div>
+                        <div class="text-[9px] text-slate-500">Limit: {{ dwell_threshold }}</div>
+                    </div>
+                    <div class="bg-slate-950 border border-slate-800 p-3 rounded-lg">
+                        <div class="text-slate-400 text-[10px] uppercase">Flight Var (σ²)</div>
+                        <div class="text-lg font-bold text-slate-200 mt-0.5"><span id="stat-flight-var">0.0</span></div>
+                        <div class="text-[9px] text-slate-500">Limit: {{ flight_threshold }}</div>
+                    </div>
+                </div>
+
+                <!-- Demo Simulation & Reset Buttons -->
+                <div class="flex flex-wrap items-center justify-between text-xs font-mono pt-2 border-t border-slate-800 gap-3">
+                    <div class="text-slate-400 text-[11px]">
+                        Samples Logged: <b id="stat-keystroke-count" class="text-emerald-400">0</b> | Status: <span id="rhythm-tag" class="text-emerald-400 font-bold">Stable</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="simulateErraticTyping()" class="px-3 py-1.5 bg-amber-950/60 hover:bg-amber-900 text-amber-300 rounded-lg border border-amber-700/60 transition text-xs font-mono">
+                            ⚡ Simulate Erratic Typing (Test Anomaly)
+                        </button>
+                        <button type="button" onclick="resetKeystrokeField()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition text-xs font-mono">
+                            Clear / Reset
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Submit Button Card -->
+            <div class="flex flex-col sm:flex-row items-center justify-between bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl gap-4">
+                <div class="text-xs text-slate-400 font-mono">
+                    Data will be securely linked and committed into MySQL InnoDB.
+                </div>
+                <button type="submit" id="btn-submit"
+                        class="w-full sm:w-auto px-8 py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl shadow-lg shadow-blue-900/40 text-sm font-mono transition flex items-center justify-center space-x-2">
+                    <span>Submit Survey & Biometric Data</span>
+                    <span>→</span>
+                </button>
+            </div>
+
+        </form>
+
+        <!-- Submission Feedback Modal/Alert -->
+        <div id="success-alert" class="hidden bg-emerald-950/80 border border-emerald-700 text-emerald-200 rounded-2xl p-6 shadow-2xl font-mono text-xs space-y-2">
+            <div class="flex items-center space-x-2 text-sm font-bold text-emerald-400">
+                <span>✓</span>
+                <span>SUBMISSION STORED SUCCESSFULLY</span>
+            </div>
+            <p id="success-message" class="text-slate-300"></p>
+            <div class="pt-2 text-[11px] text-slate-400">
+                Referential integrity enforced across <code class="text-white">students</code>, <code class="text-white">survey_responses</code>, and <code class="text-white">behavioral_analytics</code>.
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Client-Side Keystroke Dynamics Engine -->
+    <script>
+        const SESSION_ID = "{{ session_id }}";
+        const DWELL_THRESHOLD = {{ dwell_threshold }};
+        const FLIGHT_THRESHOLD = {{ flight_threshold }};
+
+        const keydownTimestamps = {};
+        let previousKeyupTimestamp = null;
+        let keystrokeCount = 0;
+
+        function toggleCrimeType(val) {
+            const container = document.getElementById('crime-type-container');
+            if (val === '1') {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        // Keystroke Capture Listeners
+        const inputField = document.getElementById('keystroke-input');
+
+        inputField.addEventListener('keydown', (e) => {
+            const now = performance.now();
+            if (!keydownTimestamps[e.code]) {
+                keydownTimestamps[e.code] = now;
+            }
+        });
+
+        inputField.addEventListener('keyup', (e) => {
+            const keyupTime = performance.now();
+            const keydownTime = keydownTimestamps[e.code] || keyupTime;
+            delete keydownTimestamps[e.code];
+
+            const dwellTime = Math.max(0, keyupTime - keydownTime);
+            let flightTime = 0;
+            if (previousKeyupTimestamp !== null) {
+                flightTime = Math.max(0, keydownTime - previousKeyupTimestamp);
+            }
+            previousKeyupTimestamp = keyupTime;
+
+            keystrokeCount++;
+
+            // Update live numbers
+            document.getElementById('live-dwell').textContent = dwellTime.toFixed(1);
+            document.getElementById('live-flight').textContent = flightTime.toFixed(1);
+            document.getElementById('stat-keystroke-count').textContent = keystrokeCount;
+
+            // Transmit packet to backend /api/telemetry
+            sendTelemetry({
+                session_id: SESSION_ID,
+                source: 'keystroke',
+                dwell_time: dwellTime,
+                flight_time: flightTime,
+                key_code: e.code
+            });
+        });
+
+        async function sendTelemetry(payload) {
+            try {
+                const res = await fetch('/api/telemetry', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (res.ok && data.metrics) {
+                    const dwellVar = data.metrics.dwell_var || 0;
+                    const flightVar = data.metrics.flight_var || 0;
+                    document.getElementById('stat-dwell-var').textContent = dwellVar.toFixed(1);
+                    document.getElementById('stat-flight-var').textContent = flightVar.toFixed(1);
+
+                    const badge = document.getElementById('biometric-badge');
+                    const rhythmTag = document.getElementById('rhythm-tag');
+
+                    if (data.threat) {
+                        badge.className = 'bg-red-950 text-red-400 border border-red-800 px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5 animate-pulse';
+                        badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-400"></span> ANOMALY DETECTED';
+                        rhythmTag.className = 'text-red-400 font-bold';
+                        rhythmTag.textContent = 'Erratic Variance';
+
+                        if (data.threat.action === 'REVOKE_SESSION') {
+                            document.getElementById('keystroke-input').disabled = true;
+                            document.getElementById('keystroke-locked-banner').classList.remove('hidden');
+                        }
+                    } else {
+                        badge.className = 'bg-emerald-950 text-emerald-400 border border-emerald-800 px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5';
+                        badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400"></span> NORMAL';
+                        rhythmTag.className = 'text-emerald-400 font-bold';
+                        rhythmTag.textContent = 'Stable';
+                    }
+                }
+            } catch (err) {
+                console.error('Telemetry error:', err);
+            }
+        }
+
+        async function simulateErraticTyping() {
+            const input = document.getElementById('keystroke-input');
+            input.value = '';
+            input.focus();
+
+            const sequence = [
+                { char: 'V', dwell: 45, flight: 120 },
+                { char: 'I', dwell: 950, flight: 2900 },
+                { char: 'T', dwell: 55, flight: 110 },
+                { char: ' ', dwell: 880, flight: 3200 },
+                { char: 'C', dwell: 50, flight: 90 },
+                { char: 'Y', dwell: 790, flight: 2800 },
+                { char: 'B', dwell: 40, flight: 80 }
+            ];
+
+            for (const item of sequence) {
+                if (input.disabled) break;
+                input.value += item.char;
+                keystrokeCount++;
+
+                document.getElementById('live-dwell').textContent = item.dwell.toFixed(1);
+                document.getElementById('live-flight').textContent = item.flight.toFixed(1);
+                document.getElementById('stat-keystroke-count').textContent = keystrokeCount;
+
+                await sendTelemetry({
+                    session_id: SESSION_ID,
+                    source: 'keystroke',
+                    dwell_time: item.dwell,
+                    flight_time: item.flight,
+                    key_code: 'Key' + item.char.toUpperCase()
+                });
+                await new Promise(r => setTimeout(r, 220));
+            }
+        }
+
+        function resetKeystrokeField() {
+            const input = document.getElementById('keystroke-input');
+            input.value = '';
+            input.disabled = false;
+            document.getElementById('keystroke-locked-banner').classList.add('hidden');
+            
+            const badge = document.getElementById('biometric-badge');
+            badge.className = 'bg-emerald-950 text-emerald-400 border border-emerald-800 px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5';
+            badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400"></span> NORMAL';
+            
+            document.getElementById('rhythm-tag').className = 'text-emerald-400 font-bold';
+            document.getElementById('rhythm-tag').textContent = 'Stable';
+            input.focus();
+        }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            const form = document.getElementById('portal-form');
+            const formData = new FormData(form);
+
+            try {
+                const res = await fetch('/submit', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    const alertBox = document.getElementById('success-alert');
+                    document.getElementById('success-message').textContent = 
+                        `Student profile (#${data.student_id}) and cyber hygiene survey answers were saved to MySQL. Biometric session #${data.session_id.substring(0,8)} linked.`;
+                    alertBox.classList.remove('hidden');
+                    alertBox.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    alert(`Error submitting: ${data.message}`);
+                }
+            } catch (err) {
+                alert(`Network error: ${err}`);
+            }
+        }
+    </script>
+</body>
+</html>
